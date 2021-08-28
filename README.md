@@ -21,3 +21,7 @@ Matrices used:
 
 Inspired by [@Daniel Shiffman's](https://shiffman.net/) Coding Challenge [#112](https://www.youtube.com/watch?v=p4Iz0XJY-Qk)
 
+---
+
+![screenshot](https://github.com/ThomasW2005/projection3DCube/screenshot.png)
+
