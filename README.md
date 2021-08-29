@@ -23,5 +23,5 @@ Inspired by [@Daniel Shiffman's](https://shiffman.net/) Coding Challenge [#112](
 
 ---
 
-![screenshot](https://github.com/ThomasW2005/projection3DCube/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/ThomasW2005/projection3DCube/master/screenshot.png)
 
