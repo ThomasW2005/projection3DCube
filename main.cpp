@@ -6,6 +6,7 @@ currentPoint[0][2]    z
 */
 
 #include "matrixMath.h"
+#include "slider.h"
 #include <SDL_ttf.h>
 #include <iostream>
 #include <vector>
@@ -18,7 +19,6 @@ int HEIGHT = 720;
 double AR = ((double)HEIGHT / WIDTH);
 const int textHeight = 20;
 
-double map(double x, double in_min, double in_max, double out_min, double out_max);
 void SDL_RenderDrawPointFloat(SDL_Renderer *renderer, double x, double y);
 void SDL_RenderDrawLineFloat(SDL_Renderer *renderer, double x, double y, double x1, double y1);
 void DrawCircle(SDL_Renderer *renderer, double centreXX, double centreYY, int32_t radius);
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     double scale = 1.5f;
     double distance = 2;
     bool quit = false, fullScreen = false;
-    bool rotX = true, rotY = true, rotZ = true;
+    bool rotX = false, rotY = false, rotZ = false;
     vec3d rotatepoint = {0, 0, 0};
     SDL_Renderer *renderer;
     SDL_Window *window;
@@ -66,6 +66,21 @@ int main(int argc, char *argv[])
     Uint32 start_time, frame_time;
     int fps;
 
+    SDL_Color bg_passiv = {200, 200, 200};
+    SDL_Color bg_hover = {123, 129, 133};
+
+    // SDL_Color fg_passive = {255, 0, 0};
+    // SDL_Color fg_hover = {200, 0, 0};
+    // SDL_Color fg_click = {170, 0, 0};
+    SDL_Color fg_passive = {0, 255, 0};
+    SDL_Color fg_hover = {0, 200, 0};
+    SDL_Color fg_click = {0, 170, 0};
+    Slider XSlider(400, textHeight * 2.5 + 2, textHeight - 4, 300, 0.0f, 2 * M_PI, renderer, bg_passiv, bg_hover, fg_passive, fg_hover, fg_click);
+    Slider YSlider(400, textHeight * 3.5 + 2, textHeight - 4, 300, 0.0f, 2 * M_PI, renderer, bg_passiv, bg_hover, fg_passive, fg_hover, fg_click);
+    Slider ZSlider(400, textHeight * 4.5 + 2, textHeight - 4, 300, 0.0f, 2 * M_PI, renderer, bg_passiv, bg_hover, fg_passive, fg_hover, fg_click);
+    Slider distanceSlider(400, textHeight * 5.5 + 2, textHeight - 4, 300, 0.5f, 4.0f, renderer, bg_passiv, bg_hover, fg_passive, fg_hover, fg_click);
+    distanceSlider.setValue(2.0f);
+
     while (!quit)
     {
         start_time = SDL_GetTicks();
@@ -73,6 +88,14 @@ int main(int argc, char *argv[])
         {
             switch (event.type)
             {
+            case SDL_MOUSEMOTION:
+            case SDL_MOUSEBUTTONUP:
+            case SDL_MOUSEBUTTONDOWN:
+                XSlider.tick(&event);
+                YSlider.tick(&event);
+                ZSlider.tick(&event);
+                distanceSlider.tick(&event);
+                break;
             case SDL_QUIT:
                 quit = true;
                 break;
@@ -168,10 +191,17 @@ int main(int argc, char *argv[])
         }
         if (rotX)
             angleX += 0.003f;
+        else
+            angleX = XSlider.value;
         if (rotY)
-            angleY += 0.003f;
+            angleY += 0.006f;
+        else
+            angleY = YSlider.value;
         if (rotZ)
-            angleZ += 0.003f;
+            angleZ += 0.009f;
+        else
+            angleZ = ZSlider.value;
+        distance = distanceSlider.value;
         matrix drawPoints;
         for (int i = 0; i < points.size(); i++)
         {
@@ -211,10 +241,14 @@ int main(int argc, char *argv[])
             "Up Arrow to move cube closer to camera",
             "Down Arrow to move cube away from camera",
             "Left/Right Arrow to change distance",
-            "X/Y/Z to toggle rotation around X/Y/Z axis",
+            "X/Y/Z to toggle between auto rotation and manual rotation using sliders for X/Y/Z axis",
             "F11 to toggle fullscreen"};
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
+        XSlider.show();
+        YSlider.show();
+        ZSlider.show();
+        distanceSlider.show();
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 
         for (int i = 0; i < 4; i++) //draw cube edges
@@ -265,11 +299,6 @@ void renderText(const char *message, TTF_Font *font, SDL_Renderer *renderer, int
     SDL_RenderCopy(renderer, textureMessage, NULL, &messageRect);
     SDL_FreeSurface(surfaceMessage);
     SDL_DestroyTexture(textureMessage);
-}
-
-double map(double x, double in_min, double in_max, double out_min, double out_max)
-{
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 void SDL_RenderDrawPointFloat(SDL_Renderer *renderer, double x, double y)

@@ -8,6 +8,7 @@
                 "-g",
                 "${file}",
                 "matrixMath.c",
+                "slider.c",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "-IC:/LIBS/SDL2-2.0.14/include", //SDL2
@@ -39,6 +40,7 @@
                 "-g",
                 "${file}",
                 "matrixMath.c",
+                "slider.c",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "-IC:/LIBS/SDL2-2.0.14/include", //SDL2
